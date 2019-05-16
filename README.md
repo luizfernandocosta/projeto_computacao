@@ -1,1 +1,1 @@
-# projeto_computacao
+Little project I made for uni.
