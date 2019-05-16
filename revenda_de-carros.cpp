@@ -117,14 +117,16 @@ void cadastraVenda(){
     gratificacao = (carro.valorDoCarro - carroParaTroca.valorDoCarro) * 0.05;
 
     if(carrosCadastrados != 0 && historicoDeOperacoes != 0){
-      fprintf(historicoDeOperacoes, "Nome do comprador: %s\nCPF: %d\nMarca do carro comprado: %s\nModelo do carro comprado: %s\nCor do veiculo comprado: %s\nAno: %d\nValor: %.2f\nMarca do carro para troca: %s\nModelo do carro para troca: %s\nAno: %d\nValor: %.2f\nNome do vendedor: %s\nGratificacao: %.2f", comprador.nome, comprador.CPF, carro.marca, carro.modelo, carro.cor, carro.ano, carro.valorDoCarro, carroParaTroca.marca, carroParaTroca.modelo, carroParaTroca.ano, carroParaTroca.valorDoCarro, vendedor.nome, gratificacao);
-      printf("\nCarro cadastrado com sucesso!\n");
+
+      //Cadastrando o que o usuario digital no txt historicodeoperacoes
+      fprintf(historicoDeOperacoes, "Nome do comprador: %s\nCPF: %d\nMarca do carro comprado: %s\nModelo do carro comprado: %s\nCor do veiculo comprado: %s\nAno: %d\nValor: %.2f\nComprador entrou com carro para troca?: Sim\nMarca do carro para troca: %s\nModelo do carro para troca: %s\nCor: %s\nAno: %d\nValor: %.2f\nNome do vendedor: %s\nGratificacao: %.2f", comprador.nome, comprador.CPF, carro.marca, carro.modelo, carro.cor, carro.ano, carro.valorDoCarro, carroParaTroca.marca, carroParaTroca.modelo, carroParaTroca.cor, carroParaTroca.ano, carroParaTroca.valorDoCarro, vendedor.nome, gratificacao);
+      printf("\nVenda cadastrada com sucesso!\n");
       fprintf(historicoDeOperacoes, "\n\n");
       fclose(historicoDeOperacoes);
 
-
-      fprintf(carrosCadastrados, "Marca: %s\nModelo: %s\nCor: %s\nAno: %d\nValor: %.2f", carro.marca, carro.modelo, carro.cor, carro.ano, carro.valorDoCarro);
-      printf("\nCarro cadastrado para venda!\n");
+      //Cadastrando o carro que entrou para troca para venda
+      fprintf(carrosCadastrados, "Marca: %s\nModelo: %s\nCor: %s\nAno: %d\nValor: %.2f", carroParaTroca.marca, carroParaTroca.modelo, carroParaTroca.cor, carroParaTroca.ano, carroParaTroca.valorDoCarro);
+      printf("\nCarro trocado cadastrado para venda!\n");
       fprintf(carrosCadastrados, "\n\n");
       fclose(carrosCadastrados);
     } else {
@@ -142,15 +144,9 @@ void cadastraVenda(){
     gratificacao = carro.valorDoCarro * 0.05;
 
     if(carrosCadastrados != 0 && historicoDeOperacoes != 0){
-      fprintf(historicoDeOperacoes, "Nome do comprador: %s\nCPF: %d\nMarca do carro comprado: %s\nModelo do carro comprado: %s\nCor do veiculo comprado: %s\nAno: %d\nValor: %.2f\nNome do vendedor: %s\nGratificacao: %.2f", comprador.nome, comprador.CPF, carro.marca, carro.modelo, carro.cor, carro.ano, carro.valorDoCarro, vendedor.nome, gratificacao);
-      printf("\nCarro cadastrado com sucesso!\n");
+      fprintf(historicoDeOperacoes, "Nome do comprador: %s\nCPF: %d\nMarca do carro comprado: %s\nModelo do carro comprado: %s\nCor do veiculo comprado: %s\nAno: %d\nValor: %.2f\nComprador entrou com algum carro para troca?: Nao\nNome do vendedor: %s\nGratificacao: %.2f", comprador.nome, comprador.CPF, carro.marca, carro.modelo, carro.cor, carro.ano, carro.valorDoCarro, vendedor.nome, gratificacao);
+      printf("\nVenda cadastrada com sucesso!\n");
       fclose(historicoDeOperacoes);
-
-
-      fprintf(carrosCadastrados, "Marca: %s\nModelo: %s\nCor: %s\nAno: %d\nValor: %.2f", carro.marca, carro.modelo, carro.cor, carro.ano, carro.valorDoCarro);
-      printf("\nCarro cadastrado para venda!\n");
-      fprintf(carrosCadastrados, "\n\n");
-      fclose(carrosCadastrados);
     } else {
       printf("Nao foi possivel abrir arquivo!\n");
     }
