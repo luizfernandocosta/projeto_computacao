@@ -6,15 +6,21 @@
 #include "stdlib.h"
 #include "conio.h"
 
+//Define o struct do proprietario
+struct proprietario{
+  char nomeProprietario[40];
+  FILE *senha = fopen("senhaproprietario.txt", "r");
+};
+
 //Define o struct do vendedor
 struct vendedor{
   char nome[40];
 };
 
-//Define o struct do proprietario
-struct proprietario{
-  char nomeProprietario[40];
-  int senha = 123456;
+//Define o struct do comprador
+struct comprador{
+  char nome[40];
+  int CPF;
 };
 
 //Define o struct do carro para venda
@@ -24,12 +30,6 @@ struct carro{
   char cor[40];
   int ano;
   float valorDoCarro;
-};
-
-//Define o struct do comprador
-struct comprador{
-  char nome[40];
-  int CPF;
 };
 
 //Define o struct do carro para troca
@@ -49,16 +49,24 @@ void cadastraVenda(){
   carroParaTroca carroParaTroca;
   comprador comprador;
 
+  //Zerando as variaveis para evitar lixo
   comprador.CPF = 0;
+  carro.ano = 0;
+  carro.valorDoCarro = 0;
+  carroParaTroca.ano = 0;
+  carroParaTroca.valorDoCarro = 0;
 
   //Define as variaveis para manipular o FILE
   FILE *carrosCadastrados;
   FILE *historicoDeOperacoes;
 
+  //Variavel para calculo de gratificacao do vendedor depois
   float gratificacao;
-  //Char para verificacao se o comprador entrou carro para troca
+
+  //Variavel para verificacao se o comprador entrou carro para troca
   char entrouCarro;
 
+  //Aqui comeca o procecsso de cadastro da venda
   fflush(stdin);
   printf("Digite o nome do comprador: ");
   gets(comprador.nome);
@@ -87,7 +95,7 @@ void cadastraVenda(){
   printf("[S/N]: ");
   scanf("%c", &entrouCarro);
   printf("\n");
-
+  //Aqui termina o cadastro e verifica se o comprador entrou com carro para troca
   if(entrouCarro == 's' || entrouCarro == 'S'){
     fflush(stdin);
     printf("Digite a marca do carro para troca: ");
@@ -114,6 +122,7 @@ void cadastraVenda(){
     carrosCadastrados = fopen("carroscadastrados.txt", "a+");
     historicoDeOperacoes = fopen("historicodeoperacoes.txt", "a+");
 
+    //Calculo da gratificacao do vendedor
     gratificacao = (carro.valorDoCarro - carroParaTroca.valorDoCarro) * 0.05;
 
     if(carrosCadastrados != 0 && historicoDeOperacoes != 0){
@@ -132,7 +141,6 @@ void cadastraVenda(){
     } else {
       printf("Nao foi possivel abrir arquivo!\n");
     }
-
   } else if (entrouCarro == 'n' || entrouCarro == 'N'){
     fflush(stdin);
     printf("Nome do vendedor: ");
@@ -239,17 +247,154 @@ void exibeHistoricoDeOperacoes(){
   	fclose(historicoOperacoes);
 }
 
-//Funcao para verificar a senha do proprietario
-int verificaSenha(int senha){
-  proprietario proprietario;
-  int verifica;
-  system("cls");
-  if(senha == proprietario.senha){
-    verifica = 1;
+void mudaSenhaProprietario(){
+  FILE *senhaProprietario = fopen("senhaproprietario.txt", "w+");
+  char senha[80];
+  char verifica[80];
+  char novaSenha[80];
+
+  printf("Por favor, digite sua senha atual: ");
+  gets(senha);
+  rewind(senhaProprietario);
+  fscanf(senhaProprietario, "%s", verifica);
+
+  if(strcmp(verifica, senha) == 0){
+    printf("Digite sua nova senha: ");
+    gets(novaSenha);
+    fprintf(senhaProprietario, "%s", novaSenha);
+    fclose(senhaProprietario);
+    printf("Sua senha foi alterada com sucesso!");
+    printf("\n");
   } else {
-    verifica = 0;
+    printf("Senha incorreta, por favor digite novamente: \n");
+    system("pause");
+    system("cls");
+    }
+}
+
+//Funcao criada para o menu do proprietario
+void menuProprietario(){
+
+    int opcaoCase1;
+
+      printf("Seja bem vindo, proprietario!\n");
+      printf("O que deseja fazer?\n\n1 - Cadastrar nova venda\n2 - Cadastrar novo carro\n3 - Pesquisar carro\n4 - Verificar historico de operacoes\n5 - Mudar senha\n6 - Sair\n\nOperacao: ");
+      scanf("%d", &opcaoCase1);
+      do{
+      switch (opcaoCase1) {
+        case 1:
+          system("cls");
+          //Chamando a funcao para cadastrar nova venda
+          cadastraVenda();
+          system("pause");
+          system("cls");
+          menuProprietario();
+        break;
+        case 2:
+          system("cls");
+          //Chamando a funcao para cadastrar novo carro
+          cadastraCarro();
+          system("pause");
+          system("cls");
+          menuProprietario();
+          break;
+        case 3:
+          system("cls");
+          //Funcao que chama para pesquisar a lista de carros disponiveis
+          pesquisaCarroParaVenda();
+          system("pause");
+          system("cls");
+          menuProprietario();
+          break;
+        case 4:
+          system("cls");
+          //Funcao que chama o historico de operacoes
+          exibeHistoricoDeOperacoes();
+          system("pause");
+          system("cls");
+          menuProprietario();
+          break;
+        case 5:
+          system("cls");
+          //Funcao que chama para mudar a senha
+          mudaSenhaProprietario();
+          system("pause");
+          system("cls");
+          menuProprietario();
+        case 6:
+          exit(1);
+        default:
+          printf("Escolhe uma opcao dentre 1 e 6!\n");
+          system("pause");
+          system("cls");
+          menuProprietario();
+          break;
+        }
+    }while(opcaoCase1 != 6);
+}
+
+void menuVendedor(){
+  int opcaoCase2;
+  printf("Seja bem vindo!\n");
+  printf("O que deseja fazer?\n\n1 - Cadastrar nova venda\n2 - Cadastrar novo carro\n3 - Pesquisar carro\n4 - Sair\n\nOperacao: ");
+  scanf("%d", &opcaoCase2);
+  printf("\n");
+    do{
+    switch (opcaoCase2) {
+      case 1:
+        system("cls");
+        //Chamando a funcao para cadastrar nova venda
+        cadastraVenda();
+        system("pause");
+        system("cls");
+        menuVendedor();
+        break;
+      case 2:
+        system("cls");
+        //Chamando a funcao para cadastrar novo carro
+        cadastraCarro();
+        system("pause");
+        system("cls");
+        menuVendedor();
+        break;
+      case 3:
+        system("cls");
+        //Funcao que chama para pesquisar a lista de carros disponiveis
+        pesquisaCarroParaVenda();
+        system("pause");
+        system("cls");
+        menuVendedor();
+        break;
+      case 4:
+        //Sair do programa
+        exit(1);
+      default:
+        printf("Escolha uma opcao dentre 1 ate 4!\n");
+        system("pause");
+        system("cls");
+        menuVendedor();
+        break;
+    }
+  }while(opcaoCase2 != 4);
+}
+
+//Funcao para verificar a senha do proprietario
+void verificaSenhaProprietario(){
+  FILE *senhaProprietario = fopen("senhaproprietario.txt", "r");
+  char senha[80];
+  char verifica[80];
+  printf("Por favor, digite a senha do proprietario: ");
+  gets(senha);
+  rewind(senhaProprietario);
+  fscanf(senhaProprietario, "%s", verifica);
+  fclose(senhaProprietario);
+
+  if(strcmp(verifica, senha) == 0){
+    menuProprietario();
+  } else {
+    printf("Senha incorreta, por favor digite novamente: \n");
+    system("cls");
   }
-  return verifica;
 }
 
 //Funcao do menu principal do programa
@@ -264,102 +409,28 @@ void menu(){
   system("cls");
 
   do{
-    if(opcaoParaEscolha > 3){
-      printf("Por favor, selecione apenas uma dentre as 3 opcoes");
-      break;
-    } else {
       switch(opcaoParaEscolha){
         //Opcao 1 para o proprietario
         case 1:
-          int opcaoCase1, senha, verifica;
-          printf("Por favor, digite a senha do proprietario: ");
-          scanf("%d", &senha);
-
-          verifica = verificaSenha(senha);
-
-          if(verifica == 1){
-            printf("Seja bem vindo, proprietario!\n");
-            printf("O que deseja fazer?\n\n1 - Cadastrar nova venda\n2 - Cadastrar novo carro\n3 - Pesquisar carro\n4 - Verificar historico de operacoes\n5 - Mudar senha\n6 - Sair\n\nOperacao: ");
-            scanf("%d", &opcaoCase1);
-            switch (opcaoCase1) {
-              case 1:
-                system("cls");
-                //Chamando a funcao para cadastrar nova venda
-                cadastraVenda();
-                system("pause");
-                system("cls");
-              break;
-              case 2:
-                system("cls");
-                //Chamando a funcao para cadastrar novo carro
-                cadastraCarro();
-                system("pause");
-                system("cls");
-                break;
-              case 3:
-                system("cls");
-                //Funcao que chama para pesquisar a lista de carros disponiveis
-                pesquisaCarroParaVenda();
-                system("pause");
-                system("cls");
-                break;
-              case 4:
-                system("cls");
-                //Funcao que chama o historico de operacoes
-                exibeHistoricoDeOperacoes();
-                system("pause");
-                system("cls");
-              case 5:
-                system("cls");
-                //Funcao que chama para mudar a senha
-                system("pause");
-                system("cls");
-              case 6:
-                exit(1);
-            }
-          } else {
-            printf("Senha errada, por favor digite novamente: \n");
-          }
+          verificaSenhaProprietario();
           break;
         //Opcao 2 para o vendedor
         case 2:
-        int opcaoCase2;
-        printf("Seja bem vindo!\n");
-        printf("O que deseja fazer?\n\n1 - Cadastrar nova venda\n2 - Cadastrar novo carro\n3 - Pesquisar carro\n4 - Sair\n\nOperacao: ");
-        scanf("%d", &opcaoCase2);
-        printf("\n");
-          switch (opcaoCase2) {
-            case 1:
-              system("cls");
-              //Chamando a funcao para cadastrar nova venda
-              cadastraVenda();
-              system("pause");
-              system("cls");
-              break;
-            case 2:
-              system("cls");
-              //Chamando a funcao para cadastrar novo carro
-              cadastraCarro();
-              system("pause");
-              system("cls");
-              break;
-            case 3:
-              system("cls");
-              //Funcao que chama para pesquisar a lista de carros disponiveis
-              pesquisaCarroParaVenda();
-              system("pause");
-              system("cls");
-              break;
-            case 4:
-              //Sair do programa
-              exit(1);
-          }
+        menuVendedor();
         break;
+        //Opcao para sair
+        case 3:
+          exit(1);
+        default:
+          printf("Por favor, escolha entre proprietario e vendedor");
+          printf("\n");
+          menu();
+          break;
       }
-    }
   }while(opcaoParaEscolha != 3);
 }
 
 int main(){
   menu();
+  return(0);
 }
